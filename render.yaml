@@ -2,7 +2,6 @@ services:
   - type: web
     name: taji
     runtime: python
-    rootDir: taji
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python manage.py init_cycle"
     startCommand: "gunicorn taji.wsgi:application"
     envVars:
