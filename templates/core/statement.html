@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Statement – {{ member }}{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1><i class="bi bi-file-text-fill me-2"></i>Member Statement</h1>
+    <button onclick="window.print()" class="btn btn-taji-outline no-print"><i class="bi bi-printer me-2"></i>Print</button>
+</div>
+
+<!-- Member Info -->
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <h5 class="fw-bold" style="color:var(--taji-purple)">{{ member.get_full_name|default:member.username }}</h5>
+                <div><span class="text-muted">Phone:</span> {{ member.phone|default:"—" }}</div>
+                <div><span class="text-muted">ID:</span> {{ member.id_number|default:"—" }}</div>
+            </div>
+            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
+                <div><span class="text-muted">Joined:</span> {{ member.date_joined_group|default:"—" }}</div>
+                <div><span class="text-muted">Level:</span> <span class="badge-level badge-{{ member.loan_level }}">{{ member.loan_level|title }}</span></div>
+                <div><span class="text-muted">Total Savings:</span> <strong>KES {{ member.total_savings|floatformat:2 }}</strong></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Savings -->
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-piggy-bank me-2"></i>Savings Transactions</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>Date</th><th>Amount (KES)</th><th>Cycle</th><th>Notes</th></tr></thead>
+                <tbody>
+                    {% for s in savings %}
+                    <tr>
+                        <td>{{ s.date }}</td>
+                        <td class="text-success">{{ s.amount|floatformat:2 }}</td>
+                        <td>{{ s.cycle|default:"—" }}</td>
+                        <td>{{ s.notes|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-muted text-center py-3">No savings.</td></tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td>Total</td>
+                        <td>KES {{ member.total_savings|floatformat:2 }}</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Loans -->
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-cash-stack me-2"></i>Loan History</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>Date</th><th>Principal</th><th>Disbursed</th><th>Balance</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td>{{ loan.applied_date }}</td>
+                        <td>KES {{ loan.principal|floatformat:2 }}</td>
+                        <td>KES {{ loan.amount_disbursed|floatformat:2 }}</td>
+                        <td>KES {{ loan.outstanding_balance|floatformat:2 }}</td>
+                        <td><span class="badge-level badge-{{ loan.status }}">{{ loan.get_status_display }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-muted text-center py-3">No loans.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Interest -->
+<div class="card">
+    <div class="card-header"><i class="bi bi-graph-up me-2"></i>Interest Earned</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead><tr><th>Date</th><th>Amount (KES)</th><th>Source</th></tr></thead>
+                <tbody>
+                    {% for i in interest %}
+                    <tr>
+                        <td>{{ i.date|date:"d M Y" }}</td>
+                        <td class="text-success">{{ i.amount|floatformat:2 }}</td>
+                        <td>{{ i.notes|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-muted text-center py-3">No interest earned yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="text-muted small mt-3 no-print">Generated on {% now "d M Y H:i" %}</div>
+{% endblock %}
