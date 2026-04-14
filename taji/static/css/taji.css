@@ -396,6 +396,27 @@ body {
     .card { box-shadow: none; border: 1px solid #ccc; }
 }
 
+/* ===== DARK MODE TEXT OVERRIDES ===== */
+[data-theme="dark"] .text-muted { color: #9b8fc0 !important; }
+[data-theme="dark"] .text-danger { color: #f87171 !important; }
+[data-theme="dark"] .text-success { color: #4ade80 !important; }
+[data-theme="dark"] .text-warning { color: #fbbf24 !important; }
+[data-theme="dark"] .text-info { color: #60a5fa !important; }
+[data-theme="dark"] .text-primary { color: #a78bfa !important; }
+[data-theme="dark"] .text-secondary { color: #9b8fc0 !important; }
+[data-theme="dark"] .badge-basic { background: #312e81; color: #c7d2fe; }
+[data-theme="dark"] .badge-full { background: #064e3b; color: #a7f3d0; }
+[data-theme="dark"] .badge-premium { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .badge-active { background: #064e3b; color: #a7f3d0; }
+[data-theme="dark"] .badge-pending { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .badge-completed { background: #312e81; color: #c7d2fe; }
+[data-theme="dark"] .badge-defaulted { background: #7f1d1d; color: #fecaca; }
+[data-theme="dark"] .alert-success { background: #064e3b; color: #a7f3d0; }
+[data-theme="dark"] .alert-danger { background: #7f1d1d; color: #fecaca; }
+[data-theme="dark"] .alert-warning { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .alert-info { background: #312e81; color: #c7d2fe; }
+[data-theme="dark"] .list-group-item { background: var(--surface); color: var(--text); border-color: var(--border); }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .main-content { padding: 1rem 0.75rem; }
