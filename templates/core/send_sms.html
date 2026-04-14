@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Send SMS – Taji{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="bi bi-chat-dots-fill me-2"></i>Send SMS</h1>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">Compose Message</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-taji w-100"><i class="bi bi-send me-2"></i>Send SMS</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clock-history me-2"></i>Recent SMS Logs</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Recipient</th><th>Message</th><th>Status</th><th>Sent</th></tr></thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.recipient.get_full_name|default:log.recipient.username }}</td>
+                                <td><small>{{ log.message|truncatechars:50 }}</small></td>
+                                <td>
+                                    {% if log.status == 'sent' %}
+                                    <span class="badge-level badge-active">Sent</span>
+                                    {% else %}
+                                    <span class="badge-level badge-defaulted">Failed</span>
+                                    {% endif %}
+                                </td>
+                                <td><small>{{ log.sent_at|date:"d M Y H:i" }}</small></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted py-3">No SMS sent yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
