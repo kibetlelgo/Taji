@@ -3,9 +3,14 @@
 {% block content %}
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
     <h1><i class="bi bi-house-fill me-2"></i>Welcome, {{ user.first_name|default:user.username }}</h1>
-    <span class="badge bg-purple text-white px-3 py-2" style="background:var(--taji-purple)!important;border-radius:20px;">
-        {{ rank }}
-    </span>
+    <div class="d-flex gap-2">
+        <a href="{% url 'record_savings' %}" class="btn btn-taji btn-sm">
+            <i class="bi bi-plus-circle me-1"></i>Add Savings
+        </a>
+        <span class="badge bg-purple text-white px-3 py-2" style="background:var(--taji-purple)!important;border-radius:20px;">
+            {{ rank }}
+        </span>
+    </div>
 </div>
 
 {% if not user.is_active_member %}
@@ -25,6 +30,27 @@
     {% endwith %}
 </div>
 {% endif %}
+
+<!-- Savings Info -->
+<div class="card mb-4" style="background: linear-gradient(135deg, var(--taji-purple), var(--taji-purple-dark)); border: none;">
+    <div class="card-body text-white">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div>
+                <h5 class="fw-bold mb-1"><i class="bi bi-piggy-bank me-2"></i>Savings Structure</h5>
+                <p class="small mb-0" style="opacity: 0.85;">
+                    <i class="bi bi-check-circle me-1"></i>Minimum guideline: <strong>KES 100/day</strong><br>
+                    <i class="bi bi-check-circle me-1"></i>Pay daily, weekly, or monthly — you're flexible<br>
+                    <i class="bi bi-check-circle me-1"></i>Registration: KES 50 (one-time)<br>
+                    <i class="bi bi-check-circle me-1"></i>Balances carry forward automatically
+                </p>
+            </div>
+            <div class="text-end">
+                <div class="fs-1 fw-bold">KES {{ total_savings|floatformat:0 }}</div>
+                <div class="small" style="opacity: 0.8;">Total Savings</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Cycle Progress -->
 {% if cycle %}
