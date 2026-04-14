@@ -104,3 +104,8 @@ AT_SENDER_ID = os.environ.get('AT_SENDER_ID', 'TAJI')
 # BlessedTexts SMS config
 BLESSEDTEXTS_API_KEY = os.environ.get('BLESSEDTEXTS_API_KEY', '4d0606e8365b41de902d3d9345b0156e')
 BLESSEDTEXTS_SENDER_ID = os.environ.get('BLESSEDTEXTS_SENDER_ID', 'BLESSEDTEXTS')
+
+# Savings config
+MINIMUM_DAILY_SAVINGS = int(os.environ.get('MINIMUM_DAILY_SAVINGS', '100'))
+REGISTRATION_FEE = int(os.environ.get('REGISTRATION_FEE', '50'))
+SAVINGS_FREQUENCY_OPTIONS = ['daily', 'weekly', 'monthly']

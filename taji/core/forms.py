@@ -33,7 +33,7 @@ class RecordSavingsForm(forms.ModelForm):
         fields = ['member', 'amount', 'date', 'notes']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'placeholder': 'Minimum: KES 100'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
@@ -41,6 +41,7 @@ class RecordSavingsForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['member'].queryset = User.objects.filter(role='member', is_active_member=True)
         self.fields['member'].widget.attrs.update({'class': 'form-control'})
+        self.fields['amount'].help_text = 'Minimum guideline: KES 100 per day'
 
 
 class SendSMSForm(forms.Form):

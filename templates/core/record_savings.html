@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
+{% load taji_extras %}
 {% block title %}Record Savings – Taji{% endblock %}
 {% block content %}
 <div class="page-header">
     <h1><i class="bi bi-plus-circle-fill me-2"></i>Record Savings</h1>
+</div>
+
+<div class="alert alert-info mb-3">
+    <i class="bi bi-info-circle me-2"></i>
+    <strong>Flexible Contributions:</strong> Members can pay daily, weekly, or monthly. No fixed amounts required.
+    Minimum guideline: <strong>KES {% settings_value 'MINIMUM_DAILY_SAVINGS' %} per day</strong>. Savings accumulate continuously and balances are always carried forward.
 </div>
 
 <div class="row g-3">
