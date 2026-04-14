@@ -33,7 +33,8 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_registration_payments' %}"><i class="bi bi-phone me-1"></i>Payments</a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-house me-1"></i>Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'loan_list' %}"><i class="bi bi-cash-stack me-1"></i>My Loans</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'add_savings' %}"><i class="bi bi-plus-circle me-1"></i>Add Savings</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'loan_list' %}"><i class="bi bi-cash-stack me-1"></i>Loans</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'apply_loan' %}"><i class="bi bi-plus-circle me-1"></i>Apply Loan</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'member_statement' pk=user.pk %}"><i class="bi bi-file-text me-1"></i>Statement</a></li>
                 {% endif %}
