@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard – Taji{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h1>
+    {% if cycle %}
+    <span class="badge px-3 py-2" style="background:var(--taji-purple);color:#fff;border-radius:20px;">
+        Cycle {{ cycle.cycle_number }} &bull; {{ cycle.start_date }} – {{ cycle.end_date }}
+    </span>
+    {% endif %}
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Total Members</div>
+            <div class="stat-value">{{ total_members }}</div>
+            <i class="bi bi-people stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card green">
+            <div class="stat-label">Total Savings</div>
+            <div class="stat-value">{{ total_savings|floatformat:0 }}</div>
+            <i class="bi bi-piggy-bank stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card accent">
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value">{{ active_loans_count }}</div>
+            <i class="bi bi-cash-stack stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card orange">
+            <div class="stat-label">Pending Loans</div>
+            <div class="stat-value">{{ pending_loans.count }}</div>
+            <i class="bi bi-hourglass stat-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning me-2"></i>Quick Actions</div>
+            <div class="card-body d-flex flex-wrap gap-2">
+                <a href="{% url 'record_savings' %}" class="btn btn-taji"><i class="bi bi-plus-circle me-2"></i>Record Savings</a>
+                <a href="{% url 'member_list' %}" class="btn btn-taji-outline"><i class="bi bi-people me-2"></i>View Members</a>
+                <a href="{% url 'loan_list' %}" class="btn btn-taji-outline"><i class="bi bi-cash-stack me-2"></i>View Loans</a>
+                <a href="{% url 'send_sms' %}" class="btn btn-taji-outline"><i class="bi bi-chat-dots me-2"></i>Send SMS</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Top Members -->
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-trophy me-2"></i>Members Overview</span>
+                <a href="{% url 'member_list' %}" class="btn btn-sm btn-taji-outline">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr><th>#</th><th>Member</th><th>Savings</th><th>Score</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for m in members|slice:":8" %}
+                            <tr>
+                                <td class="text-muted">{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'member_detail' pk=m.pk %}" style="color:var(--taji-purple);text-decoration:none;">
+                                        {{ m.get_full_name|default:m.username }}
+                                    </a>
+                                </td>
+                                <td>KES {{ m.total_savings|floatformat:0 }}</td>
+                                <td>
+                                    <div class="credit-bar" style="width:80px;display:inline-block;">
+                                        <div class="credit-bar-fill" style="width:{{ m.credit_score }}%"></div>
+                                    </div>
+                                    <small class="ms-1">{{ m.credit_score }}</small>
+                                </td>
+                                <td>
+                                    {% if m.is_active_member %}
+                                    <span class="badge-level badge-active">Active</span>
+                                    {% else %}
+                                    <span class="badge-level badge-pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-muted text-center py-3">No members yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Loans -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-cash-stack me-2"></i>Active Loans</span>
+                <a href="{% url 'loan_list' %}?status=active" class="btn btn-sm btn-taji-outline">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Member</th><th>Balance</th><th>Due</th></tr></thead>
+                        <tbody>
+                            {% for loan in active_loans|slice:":6" %}
+                            <tr>
+                                <td><a href="{% url 'loan_detail' pk=loan.pk %}" style="color:var(--taji-purple);text-decoration:none;">{{ loan.member.get_full_name|default:loan.member.username }}</a></td>
+                                <td>KES {{ loan.outstanding_balance|floatformat:0 }}</td>
+                                <td>
+                                    {{ loan.due_date }}
+                                    {% if loan.is_overdue %}<span class="badge bg-danger ms-1">Late</span>{% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-muted text-center py-3">No active loans.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

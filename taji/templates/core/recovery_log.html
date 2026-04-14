@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Recovery Log – Taji{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1><i class="bi bi-arrow-left-circle-fill me-2"></i>Recovery Log</h1>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="text-muted">{{ loans.count }} active/defaulted loans</span>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-cash-stack me-2"></i>Defaulted Loans</h5>
+                <h2>{{ loans|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-exclamation-triangle me-2"></i>Active Loans</h5>
+                <h2>{{ loans.count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle me-2"></i>Total Recoveries</h5>
+                <h2>{{ recovery_logs.count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Recent Recovery Actions</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Loan #</th>
+                        <th>Borrower</th>
+                        <th>Action</th>
+                        <th>Amount</th>
+                        <th>Recorded By</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recovery_logs %}
+                    <tr>
+                        <td><small>{{ log.recorded_at|date:"M d, Y H:i" }}</small></td>
+                        <td><a href="{% url 'loan_detail' pk=log.loan.pk %}" class="text-decoration-none">#{{ log.loan.pk }}</a></td>
+                        <td>{{ log.loan.member.get_full_name|default:log.loan.member.username }}</td>
+                        <td>
+                            {% if log.action == 'sms_sent' %}
+                            <span class="badge bg-info">SMS Sent</span>
+                            {% elif log.action == 'phone_call' %}
+                            <span class="badge bg-primary">Phone Call</span>
+                            {% elif log.action == 'visit' %}
+                            <span class="badge bg-warning">Home Visit</span>
+                            {% elif log.action == 'legal_notice' %}
+                            <span class="badge bg-danger">Legal Notice</span>
+                            {% elif log.action == 'write_off' %}
+                            <span class="badge bg-dark">Write Off</span>
+                            {% elif log.action == 'partial_payment' %}
+                            <span class="badge bg-success">Partial Payment</span>
+                            {% elif log.action == 'full_payment' %}
+                            <span class="badge bg-success">Full Payment</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-semibold">{% if log.amount %}KES {{ log.amount|floatformat:0 }}{% else %}—{% endif %}</td>
+                        <td><small>{{ log.recorded_by|default:"—" }}</small></td>
+                        <td><small>{{ log.notes|truncatechars:50 }}</small></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">No recovery actions recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

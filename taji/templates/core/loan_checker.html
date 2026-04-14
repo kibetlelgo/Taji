@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Loan Checker – Taji{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1><i class="bi bi-search me-2"></i>Loan Checker</h1>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="q" class="form-control" placeholder="Search by name, ID number, phone, or username..." value="{{ query }}">
+            <button type="submit" class="btn btn-taji"><i class="bi bi-search"></i> Search</button>
+            {% if query %}
+            <a href="{% url 'loan_checker' %}" class="btn btn-outline-secondary">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Search Results ({{ results.count }})</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>ID Number</th>
+                        <th>Savings</th>
+                        <th>Active Loans</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in results %}
+                    <tr>
+                        <td class="text-muted">{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'member_detail' pk=m.pk %}" style="color:var(--taji-purple);text-decoration:none;font-weight:500;">
+                                {{ m.get_full_name|default:m.username }}
+                            </a>
+                        </td>
+                        <td>{{ m.phone|default:"—" }}</td>
+                        <td>{{ m.id_number|default:"—" }}</td>
+                        <td class="fw-semibold">KES {{ m.total_savings|floatformat:0 }}</td>
+                        <td>
+                            {% with m.loans.all as member_loans %}
+                            <span class="badge bg-{% if member_loans|length > 0 %}warning{% else %}success{% endif %}">
+                                {{ member_loans.count }} active
+                            </span>
+                            {% if member_loans %}
+                            <ul class="list-unstyled mb-0 mt-1">
+                                {% for loan in member_loans %}
+                                <li><small><a href="{% url 'loan_detail' pk=loan.pk %}">Loan #{{ loan.pk }}</a> - KES {{ loan.outstanding_balance|floatformat:0 }}</small></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% if m.is_active_member %}
+                            <span class="badge-level badge-active">Active</span>
+                            {% else %}
+                            <span class="badge-level badge-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'member_detail' pk=m.pk %}" class="btn btn-sm btn-taji-outline">View Profile</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">No members found matching "{{ query }}".</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-search" style="font-size:3rem;color:var(--taji-muted);"></i>
+        <p class="mt-3 text-muted">Enter a search term to find members and check their loan status.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

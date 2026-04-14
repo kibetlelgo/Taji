@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Guarantors – Taji{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1><i class="bi bi-person-check-fill me-2"></i>Guarantors</h1>
+    <span class="text-muted">{{ guarantors.count }} total</span>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Guarantor</th>
+                        <th>Loan #</th>
+                        <th>Borrower</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Requested</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in guarantors %}
+                    <tr>
+                        <td class="text-muted">{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'member_detail' pk=g.member.pk %}" style="color:var(--taji-purple);text-decoration:none;font-weight:500;">
+                                {{ g.member.get_full_name|default:g.member.username }}
+                            </a>
+                        </td>
+                        <td>{{ g.loan.pk }}</td>
+                        <td>{{ g.loan.member.get_full_name|default:g.loan.member.username }}</td>
+                        <td class="fw-semibold">KES {{ g.agreed_amount|default:g.loan.principal|floatformat:0 }}</td>
+                        <td>
+                            {% if g.status == 'approved' %}
+                            <span class="badge-level badge-active">Approved</span>
+                            {% elif g.status == 'rejected' %}
+                            <span class="badge-level badge-danger">Rejected</span>
+                            {% else %}
+                            <span class="badge-level badge-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td><small>{{ g.requested_at|date:"M d, Y" }}</small></td>
+                        <td>
+                            <a href="{% url 'loan_detail' pk=g.loan.pk %}" class="btn btn-sm btn-taji-outline">View Loan</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">No guarantor requests yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

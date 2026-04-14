@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: taji
+    runtime: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python manage.py init_cycle"
+    startCommand: "gunicorn taji.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: taji.onrender.com
+      - key: AT_USERNAME
+        value: sandbox
+      - key: AT_API_KEY
+        value: your-api-key-here
