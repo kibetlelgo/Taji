@@ -3,6 +3,8 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Smoke-test marker for GitHub → Render auto-deploy (safe to remove later).
+
 import os
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-taji-change-this-in-production-xyz123')
