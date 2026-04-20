@@ -67,14 +67,15 @@
                         <input type="number" name="principal" id="id_principal"
                                class="form-control form-control-lg"
                                placeholder="e.g. 5000"
-                               min="500" max="{{ loan_limit|floatformat:0 }}"
+                               min="{{ principal_min }}"
+                               {% if loan_limit > 0 %}max="{{ loan_limit|floatformat:0 }}"{% endif %}
                                value="{{ form.principal.value|default:'' }}"
                                oninput="calculate()">
                         {% if form.principal.errors %}
                         <div class="text-danger small mt-1">{{ form.principal.errors.0 }}</div>
                         {% endif %}
                         <div class="d-flex justify-content-between mt-1">
-                            <small class="text-muted">Min: KES 500</small>
+                            <small class="text-muted">Min: KES {{ principal_min|floatformat:0 }}</small>
                             <small class="text-muted">Max: KES {{ loan_limit|floatformat:0 }}</small>
                         </div>
                         <!-- Quick amount buttons -->

@@ -160,8 +160,23 @@ def add_savings(request):
         saving.save()
         messages.success(request, f'Savings of KES {saving.amount} recorded successfully!')
         return redirect('add_savings')
-    recent = Savings.objects.filter(member=request.user).order_by('-date')[:5]
-    return render(request, 'core/add_savings.html', {'form': form, 'recent': recent})
+    recent = Savings.objects.filter(member=request.user).order_by('-date')[:8]
+    interest_earned = InterestDistribution.objects.filter(member=request.user).aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0')
+    return render(
+        request,
+        'core/add_savings.html',
+        {
+            'form': form,
+            'recent': recent,
+            'cycle': Cycle.get_current(),
+            'total_savings': request.user.total_savings,
+            'loan_limit': request.user.available_loan_limit,
+            'loan_level': request.user.loan_level,
+            'interest_earned': interest_earned,
+        },
+    )
 
 
 @login_required

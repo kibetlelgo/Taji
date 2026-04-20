@@ -5,7 +5,7 @@ from django.utils import timezone
 from decimal import Decimal
 
 from .models import Loan, LoanRepayment
-from .forms import LoanApplicationForm, RecordRepaymentForm
+from .forms import LoanApplicationForm, RecordRepaymentForm, MIN_LOAN_PRINCIPAL
 from core.models import Cycle
 from core.utils import distribute_interest, update_credit_score, send_sms
 
@@ -20,7 +20,13 @@ def apply_loan(request):
         messages.error(request, 'You already have an active loan.')
         return redirect('dashboard')
 
+    loan_limit = member.available_loan_limit
+    principal_min = (
+        MIN_LOAN_PRINCIPAL if loan_limit >= MIN_LOAN_PRINCIPAL else Decimal('1')
+    )
+
     form = LoanApplicationForm(member=member, data=request.POST or None)
+
     if request.method == 'POST' and form.is_valid():
         loan = form.save(commit=False)
         loan.member = member
@@ -42,9 +48,10 @@ def apply_loan(request):
 
     context = {
         'form': form,
-        'loan_limit': member.available_loan_limit,
+        'loan_limit': loan_limit,
         'loan_level': member.loan_level,
         'total_savings': member.total_savings,
+        'principal_min': principal_min,
     }
     return render(request, 'loans/apply.html', context)
 

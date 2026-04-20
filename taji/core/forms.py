@@ -49,9 +49,18 @@ class AddSavingsForm(forms.ModelForm):
         model = Savings
         fields = ['amount', 'date', 'notes']
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '100', 'placeholder': 'Minimum: KES 100'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Optional notes'}),
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-lg'}),
+            'amount': forms.NumberInput(
+                attrs={
+                    'class': 'form-control form-control-lg savings-amount-field',
+                    'min': '100',
+                    'placeholder': '0',
+                    'inputmode': 'decimal',
+                }
+            ),
+            'notes': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'e.g. Weekly chama contribution'}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
