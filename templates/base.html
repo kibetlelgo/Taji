@@ -16,11 +16,11 @@
         <a class="navbar-brand fw-bold" href="{% url 'home' %}">
             <i class="bi bi-piggy-bank-fill me-2"></i>Taji
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if user.role == 'admin' %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'member_list' %}"><i class="bi bi-people me-1"></i>Members</a></li>
@@ -30,15 +30,17 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'admin_registration_payments' %}"><i class="bi bi-phone me-1"></i>Payments</a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-house me-1"></i>Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'add_savings' %}"><i class="bi bi-plus-circle me-1"></i>Add Savings</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'loan_list' %}"><i class="bi bi-cash-stack me-1"></i>My Loans</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'apply_loan' %}"><i class="bi bi-plus-circle me-1"></i>Apply Loan</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'member_statement' pk=user.pk %}"><i class="bi bi-file-text me-1"></i>Statement</a></li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav align-items-center">
-                <li class="nav-item me-2">
-                    <button class="btn btn-sm theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+                <li class="nav-item">
+                    <button class="btn theme-toggle w-100" onclick="toggleTheme()" title="Toggle dark mode">
                         <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        <span class="ms-2 d-none d-md-inline">Toggle Theme</span>
                     </button>
                 </li>
                 <li class="nav-item dropdown">
@@ -92,6 +94,11 @@
         const icon = document.getElementById('theme-icon');
         if (icon) icon.className = saved === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
     })();
+
+    document.querySelector('.navbar-toggler').addEventListener('click', function() {
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !expanded);
+    });
 </script>
 {% block extra_js %}{% endblock %}
 </body>
