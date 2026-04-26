@@ -1032,18 +1032,7 @@ body {
         width: calc(100% - 1rem);
         max-height: calc(100vh - 80px);
         overflow-y: auto;
-        animation: slideDown 0.3s ease;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        z-index: 1000;
     }
 
     .navbar-nav {
@@ -1054,22 +1043,20 @@ body {
         margin: 0.25rem 0;
     }
 
-    .taji-navbar .nav-link {
+    .navbar-nav .nav-link {
         color: var(--text) !important;
         padding: 0.75rem 1rem !important;
         font-size: 1rem;
         font-weight: 500;
         border-radius: 12px;
-        display: flex;
-        align-items: center;
+        display: block;
+        text-decoration: none;
         transition: all 0.2s;
     }
 
-    .taji-navbar .nav-link:hover,
-    .taji-navbar .nav-link.active {
+    .navbar-nav .nav-link:hover {
         background: var(--surface2);
         color: var(--taji-purple) !important;
-        transform: translateX(4px);
     }
 
     .navbar-nav.align-items-center {
@@ -1078,44 +1065,52 @@ body {
         margin-top: 0.5rem;
     }
 
-    .navbar-nav.align-items-center .nav-link {
-        padding: 0.6rem 1rem !important;
-    }
-
     .theme-toggle {
-        background: var(--surface2);
-        border: none;
+        background: var(--surface2) !important;
+        border: none !important;
         color: var(--text) !important;
         width: 100%;
-        justify-content: flex-start;
+        text-align: left;
         border-radius: 12px;
-        height: auto;
         padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 500;
     }
 
     .theme-toggle:hover {
-        background: var(--surface2);
-        color: var(--taji-purple) !important;
+        background: var(--taji-purple) !important;
+        color: #fff !important;
     }
 
     .dropdown-menu {
+        position: static !important;
         background: var(--surface2);
         border: 1px solid var(--border);
         border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        margin: 0.5rem 0 0.5rem 1rem;
-        width: calc(100% - 2rem);
+        box-shadow: none;
+        margin: 0.5rem 0;
+        width: 100%;
+        transform: none !important;
     }
 
     .dropdown-item {
         padding: 0.65rem 1rem;
         font-weight: 500;
         color: var(--text) !important;
+        border-radius: 8px;
+        margin: 2px;
     }
 
     .dropdown-item:hover {
-        background: var(--surface);
+        background: var(--surface) !important;
         color: var(--taji-purple) !important;
+    }
+
+    /* Force dropdown to always show on mobile */
+    .navbar-nav .dropdown-menu {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 }
 
