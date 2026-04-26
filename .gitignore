@@ -6,4 +6,4 @@ media/
 staticfiles/
 .env
 *.log
-taji/
+taji/db.sqlite3
