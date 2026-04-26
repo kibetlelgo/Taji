@@ -1,22 +1,17 @@
 import requests
-import africastalking
 from django.conf import settings
 from decimal import Decimal
 from .models import SMSLog, InterestDistribution, User
 
 
 def send_sms(recipient_user, message):
-    """Send SMS and log it."""
-    provider = getattr(settings, 'SMS_PROVIDER', 'blessedtexts')
+    """Send SMS via BlessedTexts and log it."""
     phone = recipient_user.phone
     if phone and not phone.startswith('+'):
         phone = '+254' + phone.lstrip('0')
     
     try:
-        if provider == 'blessedtexts':
-            status = _send_sms_blessedtexts(phone, message)
-        else:
-            status = _send_sms_africastalking(phone, message)
+        status = _send_sms_blessedtexts(phone, message)
     except Exception as e:
         status = f'failed: {str(e)}'
     
@@ -48,14 +43,6 @@ def _send_sms_blessedtexts(phone, message):
     if response.status_code == 200:
         return 'sent'
     return f'failed: {response.status_code} - {response.text}'
-
-
-def _send_sms_africastalking(phone, message):
-    """Send SMS via Africa's Talking API."""
-    africastalking.initialize(settings.AT_USERNAME, settings.AT_API_KEY)
-    sms = africastalking.SMS
-    response = sms.send(message, [phone], settings.AT_SENDER_ID)
-    return 'sent'
 
 
 def distribute_interest(loan, interest_amount):

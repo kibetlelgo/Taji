@@ -1401,3 +1401,25 @@ body {
 [data-theme="dark"] .table tbody span.badge-level {
     color: #ffffff !important;
 }
+
+
+/* ===== MOBILE NAVBAR ICONS ===== */
+@media (max-width: 991px) {
+    .navbar-nav .nav-link i {
+        color: var(--taji-purple);
+        font-size: 1.1rem;
+    }
+
+    .navbar-nav .nav-link:hover i {
+        color: var(--taji-purple-dark);
+    }
+
+    /* Dark mode mobile navbar icons */
+    [data-theme="dark"] .navbar-nav .nav-link i {
+        color: #ffffff !important;
+    }
+
+    [data-theme="dark"] .navbar-nav .nav-link:hover i {
+        color: var(--taji-purple-light) !important;
+    }
+}

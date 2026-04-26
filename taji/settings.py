@@ -97,15 +97,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-# SMS config
-SMS_PROVIDER = os.environ.get('SMS_PROVIDER', 'blessedtexts')  # 'africaastalking' or 'blessedtexts'
-
-# Africa's Talking SMS config
-AT_USERNAME = os.environ.get('AT_USERNAME', 'sandbox')
-AT_API_KEY = os.environ.get('AT_API_KEY', 'your-api-key-here')
-AT_SENDER_ID = os.environ.get('AT_SENDER_ID', 'TAJI')
-
-# BlessedTexts SMS config
+# SMS config - BlessedTexts
 BLESSEDTEXTS_API_KEY = os.environ.get('BLESSEDTEXTS_API_KEY', '4d0606e8365b41de902d3d9345b0156e')
 BLESSEDTEXTS_SENDER_ID = os.environ.get('BLESSEDTEXTS_SENDER_ID', 'BLESSEDTEXTS')
 

@@ -51,7 +51,7 @@ def register(request):
         user.date_joined_group = timezone.now().date()
         user.is_active_member = False  # pending fee payment
         user.save()
-        messages.success(request, 'Registration successful. Please pay the KES 50 registration fee to activate your account.')
+        messages.success(request, 'Registration successful. Welcome to Taji Self Help Group!')
         return redirect('login')
     return render(request, 'core/register.html', {'form': form, 'cycle': cycle})
 
