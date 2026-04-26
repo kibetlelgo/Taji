@@ -90,4 +90,40 @@
         </div>
     </div>
 </div>
+
+<!-- Guarantors -->
+{% if loan.guarantors.all %}
+<div class="card mt-3">
+    <div class="card-header"><i class="bi bi-person-check-fill me-2"></i>Loan Guarantors</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr><th>Guarantor</th><th>Phone</th><th>Savings</th><th>Credit Score</th><th>Status</th><th>Approved By</th></tr>
+                </thead>
+                <tbody>
+                    {% for g in loan.guarantors.all %}
+                    <tr>
+                        <td><strong>{{ g.member.get_full_name|default:g.member.username }}</strong></td>
+                        <td>{{ g.member.phone }}</td>
+                        <td>KES {{ g.member.total_savings|floatformat:0 }}</td>
+                        <td>{{ g.member.credit_score }}/100</td>
+                        <td>
+                            {% if g.status == 'pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                            {% elif g.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td><small>{{ g.approved_by|default:"—" }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

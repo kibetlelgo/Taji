@@ -26,6 +26,14 @@ def apply_loan(request):
     )
 
     form = LoanApplicationForm(member=member, data=request.POST or None)
+    
+    # Get available guarantors (active members with good credit)
+    from core.models import User
+    available_guarantors = User.objects.filter(
+        role='member',
+        is_active_member=True,
+        credit_score__gte=50
+    ).exclude(pk=member.pk).order_by('first_name')
 
     if request.method == 'POST' and form.is_valid():
         loan = form.save(commit=False)
@@ -33,6 +41,21 @@ def apply_loan(request):
         loan.cycle = Cycle.get_current()
         loan.loan_level = member.loan_level
         loan.save()
+        
+        # Add guarantors if provided
+        guarantor_ids = request.POST.getlist('guarantors')
+        from .models import Guarantor
+        for guarantor_id in guarantor_ids:
+            try:
+                guarantor_member = User.objects.get(pk=guarantor_id, role='member')
+                Guarantor.objects.create(
+                    loan=loan,
+                    member=guarantor_member,
+                    status='pending'
+                )
+            except User.DoesNotExist:
+                pass
+        
         # Auto-approve based on eligibility
         loan.approve()
         update_credit_score(member, 'consistent_saving')
@@ -52,6 +75,7 @@ def apply_loan(request):
         'loan_level': member.loan_level,
         'total_savings': member.total_savings,
         'principal_min': principal_min,
+        'available_guarantors': available_guarantors,
     }
     return render(request, 'loans/apply.html', context)
 

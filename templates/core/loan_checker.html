@@ -2,14 +2,16 @@
 {% block title %}Loan Checker – Taji{% endblock %}
 {% block content %}
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h1><i class="bi bi-search me-2"></i>Loan Checker</h1>
+    <h1><i class="bi bi-search me-2"></i>Loan Eligibility Checker</h1>
+    <span class="text-muted">Auto-check member qualification</span>
 </div>
 
+<!-- Search Form -->
 <div class="card mb-4">
     <div class="card-body">
-        <form method="get" class="d-flex gap-2">
-            <input type="text" name="q" class="form-control" placeholder="Search by name, ID number, phone, or username..." value="{{ query }}">
-            <button type="submit" class="btn btn-taji"><i class="bi bi-search"></i> Search</button>
+        <form method="get" class="d-flex gap-2 flex-wrap">
+            <input type="text" name="q" class="form-control" placeholder="Search by name, phone, or ID number..." value="{{ query }}" style="flex: 1; min-width: 250px;">
+            <button type="submit" class="btn btn-taji"><i class="bi bi-search me-1"></i>Search</button>
             {% if query %}
             <a href="{% url 'loan_checker' %}" class="btn btn-outline-secondary">Clear</a>
             {% endif %}
@@ -17,77 +19,177 @@
     </div>
 </div>
 
+<!-- Results -->
 {% if query %}
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">Search Results ({{ results.count }})</h5>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>ID Number</th>
-                        <th>Savings</th>
-                        <th>Active Loans</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for m in results %}
-                    <tr>
-                        <td class="text-muted">{{ forloop.counter }}</td>
-                        <td>
-                            <a href="{% url 'member_detail' pk=m.pk %}" style="color:var(--taji-purple);text-decoration:none;font-weight:500;">
-                                {{ m.get_full_name|default:m.username }}
-                            </a>
-                        </td>
-                        <td>{{ m.phone|default:"—" }}</td>
-                        <td>{{ m.id_number|default:"—" }}</td>
-                        <td class="fw-semibold">KES {{ m.total_savings|floatformat:0 }}</td>
-                        <td>
-                            {% with m.loans.all as member_loans %}
-                            <span class="badge bg-{% if member_loans|length > 0 %}warning{% else %}success{% endif %}">
-                                {{ member_loans.count }} active
-                            </span>
-                            {% if member_loans %}
-                            <ul class="list-unstyled mb-0 mt-1">
-                                {% for loan in member_loans %}
-                                <li><small><a href="{% url 'loan_detail' pk=loan.pk %}">Loan #{{ loan.pk }}</a> - KES {{ loan.outstanding_balance|floatformat:0 }}</small></li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                            {% endwith %}
-                        </td>
-                        <td>
-                            {% if m.is_active_member %}
-                            <span class="badge-level badge-active">Active</span>
+    {% if results %}
+    <div class="row g-3">
+        {% for result in results %}
+        <div class="col-lg-6">
+            <div class="card {% if result.qualifies %}border-success{% else %}border-danger{% endif %}">
+                <div class="card-header {% if result.qualifies %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">{{ result.member.get_full_name|default:result.member.username }}</h5>
+                            <small>{{ result.member.phone }} • ID: {{ result.member.id_number }}</small>
+                        </div>
+                        <div class="text-end">
+                            {% if result.qualifies %}
+                            <span class="badge bg-light text-success fs-6"><i class="bi bi-check-circle me-1"></i>QUALIFIES</span>
                             {% else %}
-                            <span class="badge-level badge-pending">Pending</span>
+                            <span class="badge bg-light text-danger fs-6"><i class="bi bi-x-circle me-1"></i>NOT ELIGIBLE</span>
                             {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'member_detail' pk=m.pk %}" class="btn btn-sm btn-taji-outline">View Profile</a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr><td colspan="8" class="text-center text-muted py-4">No members found matching "{{ query }}".</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Member Stats -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="text-muted">Total Savings</small>
+                                <div class="fw-bold">KES {{ result.total_savings|floatformat:0 }}</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Loan Level</small>
+                                <div class="fw-bold">{{ result.loan_level|title }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="text-muted">Available Limit</small>
+                                <div class="fw-bold text-success">KES {{ result.available_limit|floatformat:0 }}</div>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Active Loans</small>
+                                <div class="fw-bold">{{ result.active_loans }}/1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Qualification Criteria -->
+                    <div class="mb-3">
+                        <h6 class="mb-2"><i class="bi bi-list-check me-1"></i>Qualification Criteria</h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.member.is_active_member %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.member.is_active_member %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.member.is_active_member %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        Active Member
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.member.total_savings > 0 %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.member.total_savings > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.member.total_savings > 0 %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        Has Savings
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.days_in_group >= 30 %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.days_in_group >= 30 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.days_in_group >= 30 %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        {{ result.days_in_group }} days in group
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.credit_score >= 40 %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.credit_score >= 40 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.credit_score >= 40 %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        Score: {{ result.credit_score }}/100
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.available_limit > 0 %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.available_limit > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.available_limit > 0 %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        Loan Limit Available
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded {% if result.active_loans < 1 %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                                    <small class="{% if result.active_loans < 1 %}text-success{% else %}text-danger{% endif %}">
+                                        <i class="bi {% if result.active_loans < 1 %}bi-check-circle{% else %}bi-x-circle{% endif %} me-1"></i>
+                                        No Active Loans
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reasons for Not Qualifying -->
+                    {% if not result.qualifies and result.reasons %}
+                    <div class="alert alert-danger mb-0">
+                        <h6 class="mb-2"><i class="bi bi-exclamation-triangle me-1"></i>Reasons for Ineligibility:</h6>
+                        <ul class="mb-0">
+                            {% for reason in result.reasons %}
+                            <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    {% if result.qualifies %}
+                    <div class="mt-3">
+                        <a href="{% url 'member_detail' pk=result.member.pk %}" class="btn btn-sm btn-taji w-100">
+                            <i class="bi bi-person me-1"></i>View Member Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+        {% endfor %}
     </div>
-</div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>No members found matching your search.
+    </div>
+    {% endif %}
 {% else %}
 <div class="card">
     <div class="card-body text-center py-5">
-        <i class="bi bi-search" style="font-size:3rem;color:var(--taji-muted);"></i>
-        <p class="mt-3 text-muted">Enter a search term to find members and check their loan status.</p>
+        <i class="bi bi-search" style="font-size: 3rem; color: var(--taji-purple); opacity: 0.3;"></i>
+        <h5 class="mt-3 text-muted">Search for a member to check loan eligibility</h5>
+        <p class="text-muted small">Enter member name, phone number, or ID number to automatically check if they qualify for a loan.</p>
     </div>
 </div>
 {% endif %}
+
+<!-- Qualification Criteria Info -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Qualification Criteria</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Requirements:</h6>
+                <ul class="small">
+                    <li>Must be an active member</li>
+                    <li>Must have recorded savings</li>
+                    <li>Minimum 30 days in group</li>
+                    <li>Credit score of 40 or higher</li>
+                    <li>Available loan limit (based on savings)</li>
+                    <li>Maximum 1 active loan at a time</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>Loan Limits by Level:</h6>
+                <ul class="small">
+                    <li><strong>Basic</strong> (0-59 days): 75% of total savings</li>
+                    <li><strong>Full</strong> (60-99 days): 80% of total savings</li>
+                    <li><strong>Premium</strong> (100+ days): 90% of total savings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

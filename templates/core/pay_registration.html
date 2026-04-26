@@ -11,19 +11,39 @@
         <p class="text-muted">Send <strong>KES 50</strong> via M-Pesa, then paste your transaction code below.</p>
     </div>
 
-    <div class="card mb-3" style="background:var(--surface2);border:none;">
-        <div class="card-body py-2">
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <i class="bi bi-phone-fill text-success fs-5"></i>
-                <span class="fw-semibold">M-Pesa Payment Steps</span>
+    <!-- M-Pesa Payment Instructions -->
+    <div class="alert mpesa-payment-steps border-0 mb-4">
+        <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-phone fs-5 text-success flex-shrink-0 mt-1"></i>
+            <div>
+                <h6 class="fw-bold mb-2 mpesa-title">
+                    <i class="bi bi-credit-card me-1"></i>M-Pesa Payment Steps
+                </h6>
+                <ol class="mb-0 ps-3 small mpesa-steps">
+                    <li>Go to <strong>M-Pesa</strong> on your phone</li>
+                    <li>Select <strong>Lipa na M-Pesa</strong></li>
+                    <li>Choose <strong>Buy Goods and Services</strong></li>
+                    <li>Enter Till Number: <strong class="text-success">5127854</strong>
+                        <button type="button" class="btn btn-sm btn-outline-success ms-1 py-0 px-1" onclick="copyTillNumber()" title="Copy till number">
+                            <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                        </button>
+                    </li>
+                    <li>Enter amount: <strong class="text-success">KES 50</strong></li>
+                    <li>Enter your M-Pesa PIN</li>
+                    <li>Confirm the payment</li>
+                    <li>Copy the transaction code and paste below</li>
+                </ol>
+                <div class="mt-2 p-2 rounded mpesa-till-box">
+                    <small class="text-success fw-semibold">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Till Number: <strong>5127854</strong>
+                        <button type="button" class="btn btn-sm btn-outline-success ms-2 py-0 px-2" onclick="copyTillNumber()" title="Copy till number">
+                            <i class="bi bi-copy" id="copyIcon"></i>
+                        </button>
+                        - Registration fee: <strong class="text-success">KES 50</strong>
+                    </small>
+                </div>
             </div>
-            <ol class="mb-0 ps-3" style="font-size:0.9rem;color:var(--text-muted);">
-                <li>Go to M-Pesa on your phone</li>
-                <li>Select <strong>Send Money</strong> or <strong>Pay Bill</strong></li>
-                <li>Send <strong>KES 50</strong> to the group number</li>
-                <li>Copy the <strong>transaction code</strong> from the SMS confirmation</li>
-                <li>Paste it below and submit</li>
-            </ol>
         </div>
     </div>
 
@@ -53,4 +73,37 @@
     </div>
 </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyTillNumber() {
+    const tillNumber = '5127854';
+    const copyIcon = document.getElementById('copyIcon');
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(tillNumber).then(function() {
+        // Change icon to checkmark
+        copyIcon.className = 'bi bi-check2';
+        copyIcon.parentElement.classList.remove('btn-outline-success');
+        copyIcon.parentElement.classList.add('btn-success');
+        
+        // Show success message (optional)
+        const originalTitle = copyIcon.parentElement.title;
+        copyIcon.parentElement.title = 'Copied!';
+        
+        // Reset after 2 seconds
+        setTimeout(function() {
+            copyIcon.className = 'bi bi-copy';
+            copyIcon.parentElement.classList.remove('btn-success');
+            copyIcon.parentElement.classList.add('btn-outline-success');
+            copyIcon.parentElement.title = originalTitle;
+        }, 2000);
+    }).catch(function(err) {
+        // Fallback for older browsers
+        console.log('Copy failed:', err);
+        alert('Till Number: ' + tillNumber);
+    });
+}
+</script>
 {% endblock %}

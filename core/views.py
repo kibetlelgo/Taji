@@ -290,3 +290,190 @@ def approve_registration_payment(request, pk):
         payment.save()
         messages.warning(request, f'Payment for {payment.member} rejected.')
     return redirect('admin_registration_payments')
+
+
+@login_required
+def guarantors(request):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+    from loans.models import Guarantor
+    
+    # Handle approval/rejection
+    if request.method == 'POST':
+        guarantor_id = request.POST.get('guarantor_id')
+        action = request.POST.get('action')
+        guarantor = get_object_or_404(Guarantor, pk=guarantor_id)
+        
+        if action == 'approve':
+            guarantor.status = 'approved'
+            guarantor.approved_by = request.user
+            guarantor.approved_at = timezone.now()
+            guarantor.save()
+            messages.success(request, f'{guarantor.member} approved as guarantor for Loan #{guarantor.loan.pk}')
+        elif action == 'reject':
+            guarantor.status = 'rejected'
+            guarantor.approved_by = request.user
+            guarantor.approved_at = timezone.now()
+            guarantor.save()
+            messages.warning(request, f'{guarantor.member} rejected as guarantor for Loan #{guarantor.loan.pk}')
+        
+        return redirect('guarantors')
+    
+    # Get all guarantors
+    guarantors = Guarantor.objects.select_related('loan', 'loan__member', 'member', 'approved_by').order_by('-created_at')
+    
+    # Filter by status if provided
+    status_filter = request.GET.get('status')
+    if status_filter:
+        guarantors = guarantors.filter(status=status_filter)
+    
+    # Get stats
+    pending_count = Guarantor.objects.filter(status='pending').count()
+    approved_count = Guarantor.objects.filter(status='approved').count()
+    rejected_count = Guarantor.objects.filter(status='rejected').count()
+    
+    return render(request, 'core/guarantors.html', {
+        'guarantors': guarantors,
+        'status_filter': status_filter,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+    })
+
+
+@login_required
+def recovery_log(request):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+    from loans.models import Loan, Recovery
+    loans = Loan.objects.filter(status='defaulted').select_related('member').order_by('-applied_date')
+    recovery_logs = Recovery.objects.select_related('loan', 'loan__member', 'recorded_by').order_by('-recorded_at')
+    return render(request, 'core/recovery_log.html', {'loans': loans, 'recovery_logs': recovery_logs})
+
+
+@login_required
+def loan_checker(request):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+    query = request.GET.get('q', '')
+    members = []
+    results = []
+    
+    if query:
+        from django.db.models import Q
+        members = User.objects.filter(
+            Q(first_name__icontains=query) | 
+            Q(last_name__icontains=query) | 
+            Q(phone__icontains=query) |
+            Q(id_number__icontains=query),
+            role='member'
+        ).select_related()
+        
+        # Check loan eligibility for each member
+        for member in members:
+            from loans.models import Loan
+            
+            # Get member's active loans
+            active_loans = Loan.objects.filter(member=member, status='active').count()
+            
+            # Qualification criteria
+            is_active = member.is_active_member
+            has_savings = member.total_savings > 0
+            days_in_group = member.days_in_group
+            min_days = 30  # Minimum days in group
+            credit_score = member.credit_score
+            min_credit = 40  # Minimum credit score
+            available_limit = member.available_loan_limit
+            can_borrow = available_limit > 0
+            max_active_loans = 1  # Only 1 active loan at a time
+            
+            # Determine qualification status
+            qualifies = (
+                is_active and 
+                has_savings and 
+                days_in_group >= min_days and 
+                credit_score >= min_credit and 
+                can_borrow and 
+                active_loans < max_active_loans
+            )
+            
+            # Determine reasons for not qualifying
+            reasons = []
+            if not is_active:
+                reasons.append("Not an active member")
+            if not has_savings:
+                reasons.append("No savings recorded")
+            if days_in_group < min_days:
+                reasons.append(f"Only {days_in_group} days in group (need {min_days})")
+            if credit_score < min_credit:
+                reasons.append(f"Credit score {credit_score}/100 (need {min_credit})")
+            if not can_borrow:
+                reasons.append("Loan limit exhausted")
+            if active_loans >= max_active_loans:
+                reasons.append(f"Already has {active_loans} active loan(s)")
+            
+            results.append({
+                'member': member,
+                'qualifies': qualifies,
+                'reasons': reasons,
+                'total_savings': member.total_savings,
+                'available_limit': available_limit,
+                'loan_level': member.loan_level,
+                'credit_score': credit_score,
+                'days_in_group': days_in_group,
+                'active_loans': active_loans,
+            })
+    
+    return render(request, 'core/loan_checker.html', {
+        'results': results,
+        'query': query,
+        'members': members
+    })
+
+@login_required
+def admin_statements(request):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+    
+    query = request.GET.get('q', '')
+    selected_member = None
+    member_data = None
+    
+    if query:
+        from django.db.models import Q
+        # Search for members
+        members = User.objects.filter(
+            Q(first_name__icontains=query) | 
+            Q(last_name__icontains=query) | 
+            Q(phone__icontains=query) |
+            Q(id_number__icontains=query),
+            role='member'
+        ).order_by('first_name')
+        
+        # If there's a specific member ID selected
+        member_id = request.GET.get('member_id')
+        if member_id:
+            try:
+                selected_member = User.objects.get(pk=member_id, role='member')
+                # Get member's financial data
+                savings = selected_member.savings_set.all().order_by('-date')
+                loans = selected_member.loans.all().order_by('-applied_date')
+                interest = selected_member.interestdistribution_set.all().order_by('-date')
+                
+                member_data = {
+                    'member': selected_member,
+                    'savings': savings,
+                    'loans': loans,
+                    'interest': interest,
+                }
+            except User.DoesNotExist:
+                selected_member = None
+    else:
+        members = []
+    
+    return render(request, 'core/admin_statements.html', {
+        'query': query,
+        'members': members if query and not selected_member else [],
+        'selected_member': selected_member,
+        'member_data': member_data,
+    })

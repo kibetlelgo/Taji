@@ -104,6 +104,55 @@
                         {% endif %}
                     </div>
 
+                    <!-- M-Pesa Payment Instructions -->
+                    <div class="alert mpesa-payment-steps border-0 mb-4">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="bi bi-phone fs-5 text-success flex-shrink-0 mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-2 mpesa-title">
+                                    <i class="bi bi-credit-card me-1"></i>M-Pesa Payment Steps
+                                </h6>
+                                <ol class="mb-0 ps-3 small mpesa-steps">
+                                    <li>Go to <strong>M-Pesa</strong> on your phone</li>
+                                    <li>Select <strong>Lipa na M-Pesa</strong></li>
+                                    <li>Choose <strong>Buy Goods and Services</strong></li>
+                                    <li>Enter Till Number: <strong class="text-success">5127854</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success ms-1 py-0 px-1" onclick="copyTillNumber()" title="Copy till number">
+                                            <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                                        </button>
+                                    </li>
+                                    <li>Enter the amount you're saving: <strong class="text-success" id="dynamicAmount">KES ___</strong></li>
+                                    <li>Enter your M-Pesa PIN</li>
+                                    <li>Confirm the payment</li>
+                                    <li>Record your savings here after payment</li>
+                                </ol>
+                                <div class="mt-2 p-2 rounded mpesa-till-box">
+                                    <small class="text-success fw-semibold">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Till Number: <strong>5127854</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success ms-2 py-0 px-2" onclick="copyTillNumber()" title="Copy till number">
+                                            <i class="bi bi-copy" id="copyIcon"></i>
+                                        </button>
+                                        - Save this for easy payments
+                                    </small>
+                                </div>
+                                <div class="mt-3">
+                                    <label for="transactionCode" class="form-label small fw-semibold mpesa-label">
+                                        <i class="bi bi-receipt me-1"></i>M-Pesa Transaction Code
+                                    </label>
+                                    <input type="text" class="form-control form-control-sm" id="transactionCode" 
+                                           placeholder="e.g., QGH7X8Y9Z0" 
+                                           style="font-family: monospace; letter-spacing: 1px;"
+                                           title="Paste your M-Pesa confirmation code here for record keeping">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Paste the transaction code from your M-Pesa
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-taji w-100 py-3 rounded-3 fw-semibold savings-submit-btn">
                         <i class="bi bi-check2-circle me-2"></i>Record savings
                     </button>
@@ -190,13 +239,69 @@
 <script>
 (function() {
     const input = document.getElementById('id_amount');
-    if (!input) return;
+    const dynamicAmount = document.getElementById('dynamicAmount');
+    
+    if (!input || !dynamicAmount) return;
+    
+    // Update step 5 when amount changes
+    function updateAmountDisplay() {
+        const value = input.value.trim();
+        if (value && !isNaN(value) && parseFloat(value) > 0) {
+            const formattedAmount = parseFloat(value).toLocaleString('en-KE');
+            dynamicAmount.textContent = `KES ${formattedAmount}`;
+            dynamicAmount.classList.add('text-success');
+            dynamicAmount.classList.remove('text-muted');
+        } else {
+            dynamicAmount.textContent = 'KES ___';
+            dynamicAmount.classList.remove('text-success');
+            dynamicAmount.classList.add('text-muted');
+        }
+    }
+    
+    // Listen for input changes
+    input.addEventListener('input', updateAmountDisplay);
+    input.addEventListener('change', updateAmountDisplay);
+    
+    // Handle quick save chips
     document.querySelectorAll('.quick-save-chip').forEach(function(btn) {
         btn.addEventListener('click', function() {
             input.value = btn.getAttribute('data-amt');
             input.focus();
+            updateAmountDisplay(); // Update the display immediately
         });
     });
+    
+    // Initial update in case there's already a value
+    updateAmountDisplay();
 })();
+
+function copyTillNumber() {
+    const tillNumber = '5127854';
+    const copyIcon = document.getElementById('copyIcon');
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(tillNumber).then(function() {
+        // Change icon to checkmark
+        copyIcon.className = 'bi bi-check2';
+        copyIcon.parentElement.classList.remove('btn-outline-success');
+        copyIcon.parentElement.classList.add('btn-success');
+        
+        // Show success message (optional)
+        const originalTitle = copyIcon.parentElement.title;
+        copyIcon.parentElement.title = 'Copied!';
+        
+        // Reset after 2 seconds
+        setTimeout(function() {
+            copyIcon.className = 'bi bi-copy';
+            copyIcon.parentElement.classList.remove('btn-success');
+            copyIcon.parentElement.classList.add('btn-outline-success');
+            copyIcon.parentElement.title = originalTitle;
+        }, 2000);
+    }).catch(function(err) {
+        // Fallback for older browsers
+        console.log('Copy failed:', err);
+        alert('Till Number: ' + tillNumber);
+    });
+}
 </script>
 {% endblock %}

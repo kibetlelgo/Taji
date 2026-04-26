@@ -2,16 +2,20 @@
 
 ## ✅ Single Project Structure
 
-The project now has a **single, unified structure** at the root level. No more duplicate folders!
+The project now has a **single, unified structure** at the root level with a minimal Django settings package:
 
 ```
 Taji/
 ├── templates/          ← Edit these files
-├── static/             ← Edit these files
+├── static/             ← Edit these files  
 ├── core/               ← Edit these files
 ├── loans/              ← Edit these files
+├── taji/               ← Django settings package (don't edit)
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── manage.py
-├── settings.py
 ├── render.yaml
 └── requirements.txt
 ```

@@ -92,3 +92,53 @@ class LoanRepayment(models.Model):
 
     def __str__(self):
         return f"Repayment of KES {self.amount_paid} for {self.loan}"
+
+
+
+class Recovery(models.Model):
+    ACTION_CHOICES = [
+        ('sms_sent', 'SMS Sent'),
+        ('phone_call', 'Phone Call'),
+        ('visit', 'Home Visit'),
+        ('legal_notice', 'Legal Notice'),
+        ('write_off', 'Write Off'),
+        ('partial_payment', 'Partial Payment'),
+        ('full_payment', 'Full Payment'),
+    ]
+
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='recovery_actions')
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    recorded_by = models.ForeignKey('core.User', on_delete=models.SET_NULL, null=True, blank=True)
+    recorded_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-recorded_at']
+
+    def __str__(self):
+        return f"Recovery - {self.loan} - {self.get_action_display()}"
+
+
+
+class Guarantor(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='guarantors')
+    member = models.ForeignKey('core.User', on_delete=models.CASCADE, related_name='guarantor_for')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey('core.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_guarantors')
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ('loan', 'member')
+
+    def __str__(self):
+        return f"{self.member} - Guarantor for Loan #{self.loan.pk}"

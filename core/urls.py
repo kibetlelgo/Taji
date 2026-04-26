@@ -18,4 +18,8 @@ urlpatterns = [
     path('pay-registration/', views.pay_registration_fee, name='pay_registration'),
     path('registration-payments/', views.admin_registration_payments, name='admin_registration_payments'),
     path('registration-payments/<int:pk>/review/', views.approve_registration_payment, name='approve_registration_payment'),
+    path('guarantors/', views.guarantors, name='guarantors'),
+    path('recovery-log/', views.recovery_log, name='recovery_log'),
+    path('loan-checker/', views.loan_checker, name='loan_checker'),
+    path('admin-statements/', views.admin_statements, name='admin_statements'),
 ]

@@ -109,6 +109,41 @@
                         {% endif %}
                     </div>
 
+                    <!-- Guarantors (Optional) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-person-check me-1"></i>Guarantors (Optional)
+                        </label>
+                        <p class="small text-muted mb-2">
+                            Add 1-2 guarantors to strengthen your application. They vouch for your loan repayment.
+                        </p>
+                        {% if available_guarantors %}
+                        <div class="guarantor-list">
+                            {% for guarantor in available_guarantors %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="guarantors" 
+                                       value="{{ guarantor.pk }}" id="guarantor_{{ guarantor.pk }}">
+                                <label class="form-check-label w-100" for="guarantor_{{ guarantor.pk }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>{{ guarantor.get_full_name|default:guarantor.username }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ guarantor.phone }} • Credit: {{ guarantor.credit_score }}/100</small>
+                                        </div>
+                                        <small class="badge bg-success">KES {{ guarantor.total_savings|floatformat:0 }}</small>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info small mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            No available guarantors at this time. You can still apply without guarantors.
+                        </div>
+                        {% endif %}
+                    </div>
+
                     <button type="submit" class="btn btn-taji w-100 py-3" style="font-size:1.1rem;">
                         <i class="bi bi-send-fill me-2"></i>Submit Application
                     </button>

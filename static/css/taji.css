@@ -515,10 +515,444 @@ body {
 
 [data-theme="dark"] .quick-save-chip {
     background: var(--surface2);
+    color: var(--taji-purple-light);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .quick-save-chip:hover {
+    background: var(--taji-purple);
+    border-color: var(--taji-purple);
+    color: #fff;
 }
 
 [data-theme="dark"] .savings-cycle-pill {
     background: var(--surface2);
+    color: var(--taji-purple-light);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .savings-kes-group .input-group-text {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--taji-purple-light);
+}
+
+[data-theme="dark"] .savings-form-panel {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .savings-cycle-card {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .savings-cycle-icon {
+    background: var(--surface2);
+    color: var(--taji-purple-light);
+}
+
+[data-theme="dark"] .savings-history-card {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .savings-timeline .savings-timeline-item {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+[data-theme="dark"] .savings-timeline-item:hover {
+    background: var(--surface2);
+}
+
+[data-theme="dark"] .savings-empty-icon {
+    background: var(--surface2);
+    color: var(--taji-purple-light);
+}
+
+/* ===== DARK MODE M-PESA PAYMENT STEPS ===== */
+[data-theme="dark"] .alert-info {
+    background: var(--surface2) !important;
+    border-color: var(--taji-purple) !important;
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .alert-info h6 {
+    color: var(--taji-purple-light) !important;
+}
+
+[data-theme="dark"] .alert-info ol li {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .alert-info .text-success {
+    color: #4ade80 !important;
+}
+
+/* ===== M-PESA PAYMENT STEPS STYLING ===== */
+.mpesa-payment-steps {
+    background: var(--taji-purple-pale);
+    border-left: 4px solid var(--taji-purple);
+}
+
+.mpesa-title {
+    color: var(--taji-purple);
+}
+
+.mpesa-steps {
+    color: var(--text);
+}
+
+.mpesa-till-box {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.mpesa-label {
+    color: var(--text);
+}
+
+[data-theme="dark"] .mpesa-payment-steps {
+    background: var(--surface2);
+    border-left: 4px solid var(--taji-purple);
+}
+
+[data-theme="dark"] .mpesa-title {
+    color: var(--taji-purple-light);
+}
+
+[data-theme="dark"] .mpesa-steps {
+    color: var(--text);
+}
+
+[data-theme="dark"] .mpesa-till-box {
+    background: rgba(34, 197, 94, 0.2);
+}
+
+[data-theme="dark"] .mpesa-label {
+    color: var(--text);
+}
+
+/* ===== DARK MODE TEXT OVERRIDES ===== */
+[data-theme="dark"] .text-muted { color: #9b8fc0 !important; }
+[data-theme="dark"] .text-danger { color: #f87171 !important; }
+[data-theme="dark"] .text-success { color: #4ade80 !important; }
+[data-theme="dark"] .text-warning { color: #fbbf24 !important; }
+[data-theme="dark"] .text-info { color: #60a5fa !important; }
+[data-theme="dark"] .text-primary { color: #a78bfa !important; }
+[data-theme="dark"] .text-secondary { color: #9b8fc0 !important; }
+
+/* ===== DARK MODE FORM ELEMENTS ===== */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--taji-purple);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--text);
+}
+
+/* ===== DARK MODE BADGES ===== */
+[data-theme="dark"] .badge-basic { background: #312e81; color: #ffffff !important; }
+[data-theme="dark"] .badge-full { background: #064e3b; color: #ffffff !important; }
+[data-theme="dark"] .badge-premium { background: #78350f; color: #ffffff !important; }
+[data-theme="dark"] .badge-active { background: #064e3b; color: #ffffff !important; }
+[data-theme="dark"] .badge-pending { background: #78350f; color: #ffffff !important; }
+[data-theme="dark"] .badge-completed { background: #312e81; color: #ffffff !important; }
+[data-theme="dark"] .badge-defaulted { background: #7f1d1d; color: #ffffff !important; }
+
+/* ===== DARK MODE ALERTS ===== */
+[data-theme="dark"] .alert-success { background: #064e3b; color: #a7f3d0; }
+[data-theme="dark"] .alert-danger { background: #7f1d1d; color: #fecaca; }
+[data-theme="dark"] .alert-warning { background: #78350f; color: #fde68a; }
+[data-theme="dark"] .alert-info { background: #312e81; color: #c7d2fe; }
+
+/* ===== DARK MODE TABLES ===== */
+[data-theme="dark"] .table {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table thead th {
+    background: var(--surface2);
+    color: var(--taji-purple-light) !important;
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .table tbody td {
+    border-color: var(--border);
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table tbody tr {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table tbody tr td * {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background: var(--surface2);
+}
+
+[data-theme="dark"] .table tfoot tr td {
+    color: #000000 !important;
+    background: var(--surface2);
+    border-color: var(--border);
+}
+
+/* ===== DARK MODE DROPDOWNS ===== */
+[data-theme="dark"] .dropdown-menu {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--text);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background: var(--surface2);
+    color: var(--taji-purple);
+}
+
+/* ===== DARK MODE CARDS ===== */
+[data-theme="dark"] .card {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+[data-theme="dark"] .card-header {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--taji-purple);
+}
+
+/* ===== DARK MODE LINKS ===== */
+[data-theme="dark"] a {
+    color: var(--taji-purple-light);
+}
+
+[data-theme="dark"] a:hover {
+    color: var(--taji-accent);
+}
+
+/* ===== DARK MODE BUTTONS ===== */
+[data-theme="dark"] .btn-outline-secondary {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    background: var(--surface2);
+    border-color: var(--taji-purple);
+    color: var(--taji-purple);
+}
+
+[data-theme="dark"] .btn-taji {
+    background: var(--taji-purple);
+    color: #fff !important;
+    border-color: var(--taji-purple);
+}
+
+[data-theme="dark"] .btn-taji:hover {
+    background: var(--taji-purple-dark);
+    color: #fff !important;
+    border-color: var(--taji-purple-dark);
+}
+
+[data-theme="dark"] .btn-taji-outline {
+    background: transparent;
+    color: var(--taji-purple-light);
+    border-color: var(--taji-purple);
+}
+
+[data-theme="dark"] .btn-taji-outline:hover {
+    background: var(--taji-purple);
+    color: #fff !important;
+    border-color: var(--taji-purple);
+}
+
+/* ===== DARK MODE LIST GROUPS ===== */
+[data-theme="dark"] .list-group-item {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .list-group-item:hover {
+    background: var(--surface2);
+}
+
+/* ===== DARK MODE PAGINATION ===== */
+[data-theme="dark"] .pagination .page-link {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .pagination .page-link:hover {
+    background: var(--surface2);
+    color: var(--taji-purple);
+}
+
+[data-theme="dark"] .pagination .page-item.active .page-link {
+    background: var(--taji-purple);
+    border-color: var(--taji-purple);
+}
+
+/* ===== DARK MODE STATEMENT PAGE ===== */
+[data-theme="dark"] .card-body h5 {
+    color: var(--taji-purple-light) !important;
+}
+
+[data-theme="dark"] .table tfoot tr {
+    color: var(--text) !important;
+    background: var(--surface2);
+}
+
+[data-theme="dark"] .table tfoot td {
+    color: var(--text) !important;
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .fw-bold {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .small {
+    color: var(--text-muted) !important;
+}
+
+/* ===== COMPREHENSIVE DARK MODE TEXT FIXES ===== */
+[data-theme="dark"] .card-body div {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .card-body span {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .card-body strong {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .table tbody tr td {
+    color: var(--text) !important;
+}
+
+[data-theme="dark"] .table thead tr th {
+    color: var(--taji-purple-light) !important;
+}
+
+[data-theme="dark"] .text-center {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .py-3 {
+    color: var(--text-muted) !important;
+}
+
+/* ===== STATEMENT TEMPLATE SPECIFIC FIXES ===== */
+[data-theme="dark"] .table tbody td,
+[data-theme="dark"] .table tbody td span,
+[data-theme="dark"] .table tbody td div,
+[data-theme="dark"] .table tbody td strong {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table .text-success {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table .text-muted {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table .badge-level {
+    background: var(--surface2) !important;
+    color: #000000 !important;
+    border: 1px solid var(--border);
+}
+
+/* ===== FORCE ALL TABLE TEXT TO BE BLACK (EXCEPT FOOTER) ===== */
+[data-theme="dark"] .table tbody * {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table tbody td {
+    color: #000000 !important;
+}
+
+/* ===== EXCEPTION: BADGES SHOULD BE WHITE ===== */
+[data-theme="dark"] .table tbody .badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tbody span.badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table .text-success * {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table .text-muted * {
+    color: #000000 !important;
+}
+
+/* ===== DARK MODE BADGE FIXES ===== */
+[data-theme="dark"] .badge-level {
+    color: var(--text) !important;
+}
+
+/* ===== DARK MODE GENERAL TEXT ELEMENTS ===== */
+[data-theme="dark"] div,
+[data-theme="dark"] span,
+[data-theme="dark"] p,
+[data-theme="dark"] td,
+[data-theme="dark"] th,
+[data-theme="dark"] strong,
+[data-theme="dark"] b {
+    color: var(--text);
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .text-success {
+    color: #4ade80 !important;
+}
+
+/* ===== DARK MODE INLINE STYLES OVERRIDE ===== */
+[data-theme="dark"] [style*="color"] {
+    color: var(--text) !important;
+}
+
+/* ===== MEMBER NAME STYLING ===== */
+.member-name {
+    color: var(--taji-purple);
+}
+
+[data-theme="dark"] .member-name {
+    color: var(--taji-purple-light) !important;
 }
 
 /* ===== MOBILE NAVBAR ===== */
@@ -722,4 +1156,284 @@ body {
     .stat-card .stat-value { font-size: 1.3rem; }
     .auth-card { padding: 1.75rem 1.25rem; }
     .page-header h1 { font-size: 1.3rem; }
+}
+
+/* ===== ULTRA AGGRESSIVE TABLE TEXT FIXES FOR DARK MODE ===== */
+[data-theme="dark"] .table,
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table tbody,
+[data-theme="dark"] .table tbody tr,
+[data-theme="dark"] .table tbody tr td,
+[data-theme="dark"] .table tbody tr td span,
+[data-theme="dark"] .table tbody tr td div,
+[data-theme="dark"] .table tbody tr td strong,
+[data-theme="dark"] .table tbody tr td .badge-level,
+[data-theme="dark"] .table tbody tr td .text-success,
+[data-theme="dark"] .table tbody tr td .text-muted,
+[data-theme="dark"] .table tfoot tr td {
+    color: #000000 !important;
+}
+
+/* ===== BOOTSTRAP OVERRIDE FOR DARK MODE TABLES ===== */
+[data-theme="dark"] .table > :not(caption) > * > * {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table > tbody > tr > td {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .table > tfoot > tr > td {
+    color: #000000 !important;
+}
+
+/* ===== STATEMENT PAGE SPECIFIC OVERRIDES ===== */
+[data-theme="dark"] .card .table tbody tr td {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .card .table tbody tr td * {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .card .table tfoot tr td {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .card .table tfoot tr td * {
+    color: #000000 !important;
+}
+
+/* ===== BADGE TEXT WHITE IN DARK MODE ===== */
+[data-theme="dark"] .badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-active,
+[data-theme="dark"] .badge-pending,
+[data-theme="dark"] .badge-completed,
+[data-theme="dark"] .badge-defaulted,
+[data-theme="dark"] .badge-basic,
+[data-theme="dark"] .badge-full,
+[data-theme="dark"] .badge-premium {
+    color: #ffffff !important;
+}
+
+/* ===== ULTRA AGGRESSIVE BADGE OVERRIDES ===== */
+[data-theme="dark"] span.badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] span.badge-active,
+[data-theme="dark"] span.badge-pending,
+[data-theme="dark"] span.badge-completed,
+[data-theme="dark"] span.badge-defaulted,
+[data-theme="dark"] span.badge-basic,
+[data-theme="dark"] span.badge-full,
+[data-theme="dark"] span.badge-premium {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table span.badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table td span.badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table td span[class*="badge-"] {
+    color: #ffffff !important;
+}
+
+
+/* ===== MEMBER DASHBOARD SAVINGS STRUCTURE ===== */
+.card[style*="linear-gradient"] .card-body {
+    color: #ffffff !important;
+}
+
+.card[style*="linear-gradient"] .card-body p {
+    color: #ffffff !important;
+}
+
+.card[style*="linear-gradient"] .card-body h5 {
+    color: #ffffff !important;
+}
+
+.card[style*="linear-gradient"] .card-body div {
+    color: #ffffff !important;
+}
+
+.card[style*="linear-gradient"] .card-body strong {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card[style*="linear-gradient"] .card-body {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card[style*="linear-gradient"] .card-body p {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card[style*="linear-gradient"] .card-body h5 {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card[style*="linear-gradient"] .card-body div {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card[style*="linear-gradient"] .card-body strong {
+    color: #ffffff !important;
+}
+
+/* ===== SAVINGS STRUCTURE SPECIFIC ===== */
+.card .card-body .small {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card .card-body .small {
+    color: #ffffff !important;
+}
+
+.card .card-body i {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card .card-body i {
+    color: #ffffff !important;
+}
+
+
+/* ===== ULTRA AGGRESSIVE BADGE TEXT WHITE OVERRIDE ===== */
+[data-theme="dark"] .badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-active * {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] span.badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] span.badge-active * {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table .badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table .badge-active * {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table td .badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table td .badge-active * {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-level.badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-level.badge-active * {
+    color: #ffffff !important;
+}
+
+
+/* ===== STATEMENT TEMPLATE TOTAL ROW ===== */
+[data-theme="dark"] .table tfoot tr.fw-bold td {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tfoot tr.fw-bold {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tfoot tr td strong {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tfoot {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tfoot * {
+    color: #ffffff !important;
+}
+
+
+/* ===== ULTRA AGGRESSIVE STATEMENT TOTAL ROW FIX ===== */
+[data-theme="dark"] .table tfoot tr td {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tfoot tr {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] tfoot tr td {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] tfoot {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table > tfoot > tr > td {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card .table tfoot tr td {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .card .table tfoot tr.fw-bold td {
+    color: #ffffff !important;
+}
+
+/* ===== LOAN STATUS BADGES IN STATEMENT TEMPLATE ===== */
+[data-theme="dark"] .table .badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tbody .badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table td .badge-level {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-completed {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-active {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-pending {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .badge-defaulted {
+    color: #ffffff !important;
+}
+
+/* ===== OVERRIDE TABLE BODY BLACK TEXT FOR BADGES ===== */
+[data-theme="dark"] .table tbody .badge-level * {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .table tbody span.badge-level {
+    color: #ffffff !important;
 }

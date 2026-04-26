@@ -11,7 +11,7 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                <h5 class="fw-bold" style="color:var(--taji-purple)">{{ member.get_full_name|default:member.username }}</h5>
+                <h5 class="fw-bold member-name">{{ member.get_full_name|default:member.username }}</h5>
                 <div><span class="text-muted">Phone:</span> {{ member.phone|default:"—" }}</div>
                 <div><span class="text-muted">ID:</span> {{ member.id_number|default:"—" }}</div>
             </div>

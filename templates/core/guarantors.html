@@ -2,58 +2,192 @@
 {% block title %}Guarantors – Taji{% endblock %}
 {% block content %}
 <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h1><i class="bi bi-person-check-fill me-2"></i>Guarantors</h1>
+    <h1><i class="bi bi-person-check-fill me-2"></i>Loan Guarantors</h1>
     <span class="text-muted">{{ guarantors.count }} total</span>
 </div>
 
+<!-- Stats Cards -->
+<div class="row mb-4 g-3">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Pending Review</small>
+                        <h3 class="mb-0">{{ pending_count }}</h3>
+                    </div>
+                    <i class="bi bi-hourglass-split" style="font-size: 1.5rem; color: #fbbf24; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Approved</small>
+                        <h3 class="mb-0 text-success">{{ approved_count }}</h3>
+                    </div>
+                    <i class="bi bi-check-circle-fill" style="font-size: 1.5rem; color: #22c55e; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Rejected</small>
+                        <h3 class="mb-0 text-danger">{{ rejected_count }}</h3>
+                    </div>
+                    <i class="bi bi-x-circle-fill" style="font-size: 1.5rem; color: #ef4444; opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-muted">Total</small>
+                        <h3 class="mb-0">{{ guarantors.count }}</h3>
+                    </div>
+                    <i class="bi bi-people-fill" style="font-size: 1.5rem; color: var(--taji-purple); opacity: 0.5;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="mb-3 d-flex gap-2 flex-wrap">
+    <a href="{% url 'guarantors' %}" class="btn btn-sm {% if not status_filter %}btn-taji{% else %}btn-taji-outline{% endif %}">All</a>
+    <a href="?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-taji{% else %}btn-taji-outline{% endif %}">Pending</a>
+    <a href="?status=approved" class="btn btn-sm {% if status_filter == 'approved' %}btn-taji{% else %}btn-taji-outline{% endif %}">Approved</a>
+    <a href="?status=rejected" class="btn btn-sm {% if status_filter == 'rejected' %}btn-taji{% else %}btn-taji-outline{% endif %}">Rejected</a>
+</div>
+
+<!-- Guarantors Table -->
 <div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Guarantor Records</h5>
+    </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Guarantor</th>
                         <th>Loan #</th>
                         <th>Borrower</th>
-                        <th>Amount</th>
+                        <th>Loan Amount</th>
                         <th>Status</th>
-                        <th>Requested</th>
+                        <th>Created</th>
+                        <th>Approved By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for g in guarantors %}
                     <tr>
-                        <td class="text-muted">{{ forloop.counter }}</td>
                         <td>
-                            <a href="{% url 'member_detail' pk=g.member.pk %}" style="color:var(--taji-purple);text-decoration:none;font-weight:500;">
-                                {{ g.member.get_full_name|default:g.member.username }}
+                            <div>
+                                <strong>{{ g.member.get_full_name|default:g.member.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ g.member.phone }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{% url 'loan_detail' pk=g.loan.pk %}" class="text-decoration-none">
+                                #{{ g.loan.pk }}
                             </a>
                         </td>
-                        <td>{{ g.loan.pk }}</td>
-                        <td>{{ g.loan.member.get_full_name|default:g.loan.member.username }}</td>
-                        <td class="fw-semibold">KES {{ g.agreed_amount|default:g.loan.principal|floatformat:0 }}</td>
                         <td>
-                            {% if g.status == 'approved' %}
-                            <span class="badge-level badge-active">Approved</span>
-                            {% elif g.status == 'rejected' %}
-                            <span class="badge-level badge-danger">Rejected</span>
+                            <div>
+                                <strong>{{ g.loan.member.get_full_name|default:g.loan.member.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ g.loan.member.phone }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>KES {{ g.loan.principal|floatformat:0 }}</strong>
+                            <br>
+                            <small class="text-muted">{{ g.loan.get_status_display }}</small>
+                        </td>
+                        <td>
+                            {% if g.status == 'pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                            {% elif g.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
                             {% else %}
-                            <span class="badge-level badge-pending">Pending</span>
+                            <span class="badge bg-danger">Rejected</span>
                             {% endif %}
                         </td>
-                        <td><small>{{ g.requested_at|date:"M d, Y" }}</small></td>
                         <td>
+                            <small>{{ g.created_at|date:"M d, Y" }}</small>
+                        </td>
+                        <td>
+                            <small>{{ g.approved_by|default:"—" }}</small>
+                        </td>
+                        <td>
+                            {% if g.status == 'pending' %}
+                            <div class="btn-group btn-group-sm" role="group">
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="guarantor_id" value="{{ g.pk }}">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Approve this guarantor?')">
+                                        <i class="bi bi-check-circle me-1"></i>Approve
+                                    </button>
+                                </form>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="guarantor_id" value="{{ g.pk }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this guarantor?')">
+                                        <i class="bi bi-x-circle me-1"></i>Reject
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
                             <a href="{% url 'loan_detail' pk=g.loan.pk %}" class="btn btn-sm btn-taji-outline">View Loan</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="8" class="text-center text-muted py-4">No guarantor requests yet.</td></tr>
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.3;"></i>
+                            <p class="mt-2">No guarantors found.</p>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- Information Card -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>About Guarantors</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-2">
+            <strong>Guarantors</strong> are members who vouch for a loan applicant. They provide additional security for the loan and can be held liable if the borrower defaults.
+        </p>
+        <h6 class="mt-3 mb-2">Guarantor Requirements:</h6>
+        <ul class="small mb-0">
+            <li>Must be an active member of the group</li>
+            <li>Must have good credit standing (no defaulted loans)</li>
+            <li>Cannot guarantee more than 2 loans simultaneously</li>
+            <li>Must have sufficient savings to cover potential liability</li>
+            <li>Subject to admin approval</li>
+        </ul>
     </div>
 </div>
 {% endblock %}
