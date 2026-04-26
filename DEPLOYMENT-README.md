@@ -1,49 +1,40 @@
 # 🚀 Taji Deployment Guide
 
-## ⚠️ IMPORTANT: Duplicate Project Structure
+## ✅ Single Project Structure
 
-Your project has **TWO copies** of the codebase:
+The project now has a **single, unified structure** at the root level. No more duplicate folders!
 
-1. **Root level** (for local development):
-   - `templates/`, `core/`, `loans/`, `static/`
-
-2. **Inside `taji/` folder** (what Render deploys):
-   - `taji/templates/`, `taji/core/`, `taji/loans/`, `taji/static/`
+```
+Taji/
+├── templates/          ← Edit these files
+├── static/             ← Edit these files
+├── core/               ← Edit these files
+├── loans/              ← Edit these files
+├── manage.py
+├── settings.py
+├── render.yaml
+└── requirements.txt
+```
 
 ## 🔧 How to Deploy Changes
 
-### Option 1: Edit Files in `taji/` Folder Directly (Recommended)
+### Simple Workflow:
 
-Always edit files inside the `taji/` folder:
-- ✅ `taji/templates/core/login.html`
-- ✅ `taji/static/css/taji.css`
-- ✅ `taji/core/views.py`
+1. **Edit files directly** in the root folders:
+   - ✅ `templates/core/login.html`
+   - ✅ `static/css/taji.css`
+   - ✅ `core/views.py`
 
-**NOT** the root-level files:
-- ❌ `templates/core/login.html`
-- ❌ `static/css/taji.css`
-- ❌ `core/views.py`
+2. **Commit and push:**
+   ```bash
+   git add .
+   git commit -m "Your changes"
+   git push origin main
+   ```
 
-### Option 2: Use the Sync Script
+3. **Wait for Render** to auto-deploy (2-3 minutes)
 
-If you edited root-level files, run the sync script before committing:
-
-**On Windows:**
-```bash
-./sync-to-taji.bat
-```
-
-**On Mac/Linux:**
-```bash
-bash sync-to-taji.sh
-```
-
-Then commit and push:
-```bash
-git add taji/
-git commit -m "Your changes"
-git push origin main
-```
+4. **Clear browser cache** on your phone or use incognito mode
 
 ## 📱 Viewing Changes on Mobile
 
@@ -60,36 +51,101 @@ After pushing to GitHub:
 
 ### Changes not showing after deployment?
 
-1. Check you edited files in `taji/` folder, not root
-2. Verify Render deployment succeeded (check logs)
-3. Clear browser cache or use incognito mode
-4. Check the CSS version in base.html: `taji.css?v=1.1`
+1. Verify Render deployment succeeded (check logs)
+2. Clear browser cache or use incognito mode
+3. Check the CSS version in base.html: `taji.css?v=1.2`
+4. Hard refresh on mobile (hold refresh button)
 
-### How to verify which files Render uses?
+### How to test locally?
 
-Run locally from project root:
+Run from project root:
 ```bash
-cd taji
 python manage.py runserver
 ```
 
-This mimics what Render does.
+Then visit: http://localhost:8000
 
-## 📂 Project Structure
+## 📂 Project Structure Details
 
 ```
 Taji/
-├── taji/                    ← RENDER DEPLOYS THIS
-│   ├── templates/
-│   ├── static/
+├── core/                    # Main app
+│   ├── views.py
+│   ├── models.py
+│   ├── forms.py
+│   ├── urls.py
+│   └── management/
+│       └── commands/
+│           └── init_cycle.py
+├── loans/                   # Loans app
+│   ├── views.py
+│   ├── models.py
+│   ├── forms.py
+│   └── urls.py
+├── templates/               # HTML templates
+│   ├── base.html
 │   ├── core/
-│   ├── loans/
-│   ├── manage.py
-│   └── settings.py
-├── templates/               ← Local development only
-├── static/                  ← Local development only
-├── core/                    ← Local development only
-├── loans/                   ← Local development only
-├── manage.py                ← Points to taji/settings.py
-└── render.yaml              ← Deployment config
+│   └── loans/
+├── static/                  # CSS, JS, images
+│   └── css/
+│       ├── taji.css
+│       └── home.css
+├── taji/                    # Django settings package
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── manage.py                # Django management
+├── settings.py              # Main settings (imports from taji/)
+├── render.yaml              # Render deployment config
+└── requirements.txt         # Python dependencies
 ```
+
+## 🎯 Key Files for Customization
+
+### Styling
+- `static/css/taji.css` - Main styles, dark mode, navbar
+- `static/css/home.css` - Landing page styles
+
+### Templates
+- `templates/base.html` - Base template with navbar
+- `templates/core/` - Core app templates
+- `templates/loans/` - Loan app templates
+
+### Backend
+- `core/views.py` - Core app views
+- `core/models.py` - Database models
+- `loans/views.py` - Loan views
+- `taji/settings.py` - Django settings
+
+## 🚀 Deployment Configuration
+
+The `render.yaml` file configures automatic deployment:
+
+```yaml
+buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python manage.py init_cycle"
+startCommand: "gunicorn taji.wsgi:application"
+```
+
+This automatically:
+1. Installs Python packages
+2. Collects static files (CSS, JS)
+3. Runs database migrations
+4. Initializes the savings cycle
+5. Starts the web server
+
+## 💡 Tips
+
+- **CSS changes:** Increment version number in `base.html` (`taji.css?v=1.3`)
+- **Template changes:** Clear browser cache after deployment
+- **Python changes:** Render automatically restarts the server
+- **Database changes:** Create migrations with `python manage.py makemigrations`
+
+## 🔒 Environment Variables
+
+Set these in Render dashboard:
+
+- `DEBUG` - Set to `False` for production
+- `SECRET_KEY` - Auto-generated by Render
+- `ALLOWED_HOSTS` - Your Render domain
+- `AT_USERNAME` - Africa's Talking username
+- `AT_API_KEY` - Africa's Talking API key
