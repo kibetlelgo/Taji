@@ -7,7 +7,7 @@ from django.db.models import Sum
 from decimal import Decimal
 
 from .models import User, Cycle, Savings, InterestDistribution, SMSLog, RegistrationPayment
-from .forms import MemberRegistrationForm, LoginForm, RecordSavingsForm, SendSMSForm, RegistrationPaymentForm
+from .forms import MemberRegistrationForm, LoginForm, RecordSavingsForm, AddSavingsForm, SendSMSForm, RegistrationPaymentForm
 from .utils import send_sms, check_and_rotate_cycle
 from loans.models import Loan
 
@@ -144,6 +144,42 @@ def record_savings(request):
         return redirect('record_savings')
     recent = Savings.objects.order_by('-date')[:10]
     return render(request, 'core/record_savings.html', {'form': form, 'recent': recent})
+
+
+@login_required
+def add_savings(request):
+    if request.user.role == 'admin':
+        return redirect('record_savings')
+    form = AddSavingsForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        saving = form.save(commit=False)
+        saving.member = request.user
+        saving.cycle = Cycle.get_current()
+        saving.recorded_by = request.user
+        saving.save()
+        if not saving.member.is_active_member and saving.member.total_savings >= 50:
+            saving.member.is_active_member = True
+            saving.member.registration_fee_paid = True
+            saving.member.save()
+        messages.success(request, f'Savings of KES {saving.amount} recorded successfully!')
+        return redirect('add_savings')
+    recent = Savings.objects.filter(member=request.user).order_by('-date')[:8]
+    interest_earned = InterestDistribution.objects.filter(member=request.user).aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0')
+    return render(
+        request,
+        'core/add_savings.html',
+        {
+            'form': form,
+            'recent': recent,
+            'cycle': Cycle.get_current(),
+            'total_savings': request.user.total_savings,
+            'loan_limit': request.user.available_loan_limit,
+            'loan_level': request.user.loan_level,
+            'interest_earned': interest_earned,
+        },
+    )
 
 
 @login_required

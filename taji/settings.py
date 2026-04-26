@@ -81,6 +81,10 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# WhiteNoise cache control - cache static files for 1 year (they have hashed names)
+# but allow HTML to be revalidated
+WHITENOISE_MAX_AGE = 31536000  # 1 year for static files with hashed names
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

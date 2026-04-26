@@ -43,6 +43,30 @@ class RecordSavingsForm(forms.ModelForm):
         self.fields['member'].widget.attrs.update({'class': 'form-control'})
 
 
+class AddSavingsForm(forms.ModelForm):
+    class Meta:
+        model = Savings
+        fields = ['amount', 'date', 'notes']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-lg'}),
+            'amount': forms.NumberInput(
+                attrs={
+                    'class': 'form-control form-control-lg savings-amount-field',
+                    'min': '100',
+                    'placeholder': '0',
+                    'inputmode': 'decimal',
+                }
+            ),
+            'notes': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'e.g. Weekly chama contribution'}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].help_text = 'Minimum guideline: KES 100 per day'
+
+
 class SendSMSForm(forms.Form):
     RECIPIENT_CHOICES = [('all', 'All Members'), ('individual', 'Individual Member')]
     recipient_type = forms.ChoiceField(choices=RECIPIENT_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
