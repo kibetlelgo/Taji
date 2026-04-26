@@ -3,11 +3,10 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from django.db import models
 from django.db.models import Sum
 from decimal import Decimal
 
-from .models import User, Cycle, Savings, InterestDistribution, SMSLog, RegistrationPayment, Guarantor, RecoveryLog
+from .models import User, Cycle, Savings, InterestDistribution, SMSLog, RegistrationPayment
 from .forms import MemberRegistrationForm, LoginForm, RecordSavingsForm, AddSavingsForm, SendSMSForm, RegistrationPaymentForm
 from .utils import send_sms, check_and_rotate_cycle
 from loans.models import Loan
@@ -158,6 +157,10 @@ def add_savings(request):
         saving.cycle = Cycle.get_current()
         saving.recorded_by = request.user
         saving.save()
+        if not saving.member.is_active_member and saving.member.total_savings >= 50:
+            saving.member.is_active_member = True
+            saving.member.registration_fee_paid = True
+            saving.member.save()
         messages.success(request, f'Savings of KES {saving.amount} recorded successfully!')
         return redirect('add_savings')
     recent = Savings.objects.filter(member=request.user).order_by('-date')[:8]
@@ -287,37 +290,3 @@ def approve_registration_payment(request, pk):
         payment.save()
         messages.warning(request, f'Payment for {payment.member} rejected.')
     return redirect('admin_registration_payments')
-
-
-@login_required
-def guarantors(request):
-    if request.user.role != 'admin':
-        return redirect('dashboard')
-    guarantors = Guarantor.objects.select_related('loan', 'member').order_by('-requested_at')
-    return render(request, 'core/guarantors.html', {'guarantors': guarantors})
-
-
-@login_required
-def recovery_log(request):
-    if request.user.role != 'admin':
-        return redirect('dashboard')
-    loans = Loan.objects.filter(status__in=['active', 'defaulted']).select_related('member')
-    recovery_logs = RecoveryLog.objects.select_related('loan', 'recorded_by').order_by('-recorded_at')[:50]
-    return render(request, 'core/recovery_log.html', {'recovery_logs': recovery_logs, 'loans': loans})
-
-
-@login_required
-def loan_checker(request):
-    if request.user.role != 'admin':
-        return redirect('dashboard')
-    query = request.GET.get('q', '')
-    results = []
-    if query:
-        results = User.objects.filter(
-            models.Q(id_number__icontains=query) | 
-            models.Q(username__icontains=query) |
-            models.Q(phone__icontains=query) |
-            models.Q(first_name__icontains=query) |
-            models.Q(last_name__icontains=query)
-        ).filter(role='member')[:10]
-    return render(request, 'core/loan_checker.html', {'query': query, 'results': results})
